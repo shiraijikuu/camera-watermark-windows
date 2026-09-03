@@ -323,6 +323,18 @@ body.sliding .sheet,body.sliding #rightPane{opacity:.4}
       <div class="seg" id="styleSeg">
         <button data-v="text" class="active" data-i18n="style_text">文字水印</button>
         <button data-v="blur" data-i18n="style_blur">模糊卡片</button>
+        <button data-v="frame" data-i18n="style_frame">画框模板</button>
+      </div>
+    </div>
+    <div class="group hidden" id="grpFrame">
+      <h4 data-i18n="g_frame">画框模板</h4>
+      <div class="row"><label data-i18n="f_tpl">模板</label><select class="cmb grow" id="frameTpl"></select></div>
+      <div class="field-grid" style="margin-top:6px">
+        <label class="chk"><input type="checkbox" id="frameLogo"><span data-i18n="f_logo">品牌标</span></label>
+        <label class="chk"><input type="checkbox" id="frameModel"><span data-i18n="f_model">型号</span></label>
+        <label class="chk"><input type="checkbox" id="frameParams"><span data-i18n="f_params">拍摄参数</span></label>
+        <label class="chk"><input type="checkbox" id="frameLens"><span data-i18n="f_lens">镜头</span></label>
+        <label class="chk"><input type="checkbox" id="frameDate"><span data-i18n="f_date">日期</span></label>
       </div>
     </div>
     <div class="group hidden" id="grpBlur">
@@ -440,7 +452,7 @@ if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.proto
 /* ================= i18n ================= */
 const I18N={zh:{tagline:'照片水印工具',tplLib:'模板库',about:'关于',checkUpdate:'检查更新',language:'语言',export:'导出当前',phoneView:'手机形态',backDesktop:'返回桌面',
  photos:'照片',import:'导入照片',fit:'适',dropHint:'拖入照片 · 滚轮缩放 · 拖空白平移 · 拖水印改位置',dropHintTouch:'单指拖空白平移 · 双指捏合缩放 · 拖文字水印改位置',collapse:'收起',
- g_style:'水印样式',tab_style:'样式',tab_param:'参数',tab_export:'导出',tab_edit:'编辑',nb_text:'水印文字',nb_style:'样式',nb_image:'图片水印',nb_pos:'位置',nb_deco:'装饰',nb_export:'导出',selAll:'全选',selNone:'全不选',compare:'对比原图',listHead:'文件名 / 相机 · 参数',style_text:'文字水印',style_blur:'模糊卡片',g_text:'文字内容',tplPreset:'模板预设',camOverride:'机型覆盖',
+ g_style:'水印样式',style_frame:'画框模板',g_frame:'画框模板',f_tpl:'模板',f_logo:'品牌标',f_model:'型号',f_params:'拍摄参数',f_lens:'镜头',f_date:'日期',tab_style:'样式',tab_param:'参数',tab_export:'导出',tab_edit:'编辑',nb_text:'水印文字',nb_style:'样式',nb_image:'图片水印',nb_pos:'位置',nb_deco:'装饰',nb_export:'导出',selAll:'全选',selNone:'全不选',compare:'对比原图',listHead:'文件名 / 相机 · 参数',style_text:'文字水印',style_blur:'模糊卡片',g_text:'文字内容',tplPreset:'模板预设',camOverride:'机型覆盖',
  g_font:'字体 / 文字',fontFamily:'字体',loadFont:'加载',textColor:'颜色',bold:'加粗',g_pos:'位置（可在预览上拖动）',
  g_deco:'底色 / 描边 / 阴影',bgBlock:'文字底色块',bgColor:'底色',outline:'描边',outlineColor:'颜色',shadow:'阴影',
  g_blur:'模糊卡片',b_ratio:'画面比例',b_layout:'排版布局',b_shadow:'前景阴影',b_outline:'前景描边',b_badge:'参数标签框',b_overlay:'叠加图片水印',b_order:'字段模板',b_align:'参数对齐',
@@ -448,7 +460,7 @@ const I18N={zh:{tagline:'照片水印工具',tplLib:'模板库',about:'关于',c
  g_export:'导出',ex_format:'格式',ex_suffix:'文件名后缀',ex_ratio:'导出比例',ex_batch:'批量导出全部'},
 en:{tagline:'Photo Watermark',tplLib:'Templates',about:'About',checkUpdate:'Update',language:'Language',export:'Export',phoneView:'Phone',backDesktop:'Desktop',
  photos:'Photos',import:'Import',fit:'Fit',dropHint:'Drop photos · wheel zoom · drag bg to pan · drag watermark',dropHintTouch:'1-finger pan · pinch to zoom · drag watermark',collapse:'Close',
- g_style:'Style',tab_style:'Style',tab_param:'Params',tab_export:'Export',tab_edit:'Edit',nb_text:'Text',nb_style:'Style',nb_image:'Image',nb_pos:'Position',nb_deco:'Decor',nb_export:'Export',selAll:'All',selNone:'None',compare:'Compare',listHead:'Name / Camera · Params',style_text:'Text',style_blur:'Blur card',g_text:'Text content',tplPreset:'Preset',camOverride:'Override camera',
+ g_style:'Style',style_frame:'Frame',g_frame:'Photo frame',f_tpl:'Template',f_logo:'Logo',f_model:'Camera',f_params:'Params',f_lens:'Lens',f_date:'Date',tab_style:'Style',tab_param:'Params',tab_export:'Export',tab_edit:'Edit',nb_text:'Text',nb_style:'Style',nb_image:'Image',nb_pos:'Position',nb_deco:'Decor',nb_export:'Export',selAll:'All',selNone:'None',compare:'Compare',listHead:'Name / Camera · Params',style_text:'Text',style_blur:'Blur card',g_text:'Text content',tplPreset:'Preset',camOverride:'Override camera',
  g_font:'Font / Text',fontFamily:'Font',loadFont:'Load',textColor:'Color',bold:'Bold',g_pos:'Position (draggable)',
  g_deco:'Bg / Outline / Shadow',bgBlock:'Text background',bgColor:'Bg',outline:'Outline',outlineColor:'Color',shadow:'Shadow',
  g_blur:'Blur card',b_ratio:'Canvas ratio',b_layout:'Layout',b_shadow:'FG shadow',b_outline:'FG outline',b_badge:'Badge boxes',b_overlay:'Overlay logo',b_order:'Field template',b_align:'Params align',
@@ -482,7 +494,7 @@ const state={
  imgEnabled:false, imgCount:1, imgAlign:'无', imgGap:1.5,
  slots:[0,1,2,3,4].map(i=>({logo:i===0?'sony':'',custom:null,img:null,size:15,x:50,y:i===0?88:50,rot:0,op:100})),
  format:'jpg', quality:95, suffix:'_wm', exportRatio:'raw',
- zoom:100, panX:0, panY:0, theme:'auto', search:''
+ zoom:100, panX:0, panY:0, theme:'auto', search:'', frameTpl:'classic', frameLogo:true, frameModel:true, frameParams:true, frameLens:false, frameDate:true
 };
 /* 比例（对齐 blur-card RATIO_ORDER + 导出比例） */
 const RATIOS=[['raw',null],['auto','auto'],['21:9',21/9],['16:9',16/9],['3:2',3/2],['4:3',4/3],['1:1',1],['4:5',4/5],['3:4',3/4],['2:3',2/3],['9:16',9/16]];
@@ -510,7 +522,7 @@ function fmtShutter(v){if(v==null||v==='')return'';let x=Number(v);if(!isFinite(
 function fmtAperture(v){if(v==null||v==='')return'';let x=Number(v);if(!isFinite(x))return String(v).replace(/^[fFƒ]/?'/':'','');let s=String(Math.round(x*100)/100);return'F'+s;}
 function fmtIso(v){if(v==null||v==='')return'';return'ISO '+v;}
 function fmtFocal(v){if(v==null||v==='')return'';let x=Number(v);if(!isFinite(x))return String(v);return(Math.round(x*10)/10)+'mm';}
-function fmtDT(raw){if(!raw)return{date:'',time:''};let s=String(raw).replace(':','-').replace(':','-');const p=s.split(/[ T]/);return{date:p[0]||'',time:(p[1]||'').slice(0,5)};}
+function fmtDT(raw){if(!raw)return{date:'',time:''};let y,mo,d,h,mi;const p2=n=>String(n).padStart(2,'0');if(raw instanceof Date){y=raw.getFullYear();mo=raw.getMonth()+1;d=raw.getDate();h=raw.getHours();mi=raw.getMinutes();}else{const m=String(raw).trim().match(/(\d{4})[:-](\d{2})[:-](\d{2})(?:[ T](\d{2}):(\d{2}))?/);if(!m)return{date:'',time:''};y=+m[1];mo=+m[2];d=+m[3];h=m[4]!=null?+m[4]:null;mi=m[5]!=null?+m[5]:null;}return{date:y+'-'+p2(mo)+'-'+p2(d),time:h==null?'':p2(h)+':'+p2(mi)};}
 function renderTemplate(tpl,vals){
  const out=String(tpl||'').replace(/\{([a-zA-Z]+)\}/g,(mm,k)=>{const kk=k.toLowerCase();return vals[kk]!=null?vals[kk]:'';});
  return out.replace(/^\s*\n/,'').replace(/\n\s*$/,'');
@@ -579,7 +591,8 @@ function pickRatioVal(label,sw,sh){
 }
 function computeOut(ph){
  let sw=ph.src.width,sh=ph.src.height;
- const rv=pickRatioVal(state.style==='blur'?state.blurRatio:state.exportRatio,sw,sh);
+ if(state.style==='frame'){const t=getFrame(state.frameTpl);return frameOutSize(sw,sh,t);}
+  const rv=pickRatioVal(state.style==='blur'?state.blurRatio:state.exportRatio,sw,sh);
  if(!rv)return{W:sw,H:sh};
  let W,H; if(sw/sh>rv){H=sh;W=Math.round(sh*rv);}else{W=sw;H=Math.round(W/rv);}
  return{W,H,cx:(sw-W)/2,cy:(sh-H)/2};
@@ -599,11 +612,12 @@ function renderTo(c,W,H,ph,crop){
  const src=ph.src;
  if(window.__CMP__){c.drawImage(src,crop?crop.cx:0,crop?crop.cy:0,W,H,0,0,W,H);return;}
  if(state.style==='blur'){drawBlurStyle(c,W,H,ph,src,crop);}
+  else if(state.style==='frame'){drawFrame(c,W,H,ph,src,crop);}
  else{ // 原图（按导出比例裁剪）
    c.drawImage(src,crop?crop.cx:0,crop?crop.cy:0,W,H,0,0,W,H);
    ph._textRect=drawTextWatermark(c,W,H,ph,false);
  }
- if(state.imgEnabled && (state.style!=='blur'||state.overlayImage)) drawImageMarks(c,W,H,ph);
+ if(state.imgEnabled && (state.style==='text'||state.style==='frame'||(state.style==='blur'&&state.overlayImage))) drawImageMarks(c,W,H,ph);
 }
 function render(){
  const ph=curPhoto();if(!ph)return;
@@ -674,6 +688,165 @@ function fontStack(){if(state.fontFamily==='system')return'"Segoe UI","Microsoft
  if(state.fontFamily==='mono')return'Consolas,"Courier New",monospace';
  if(LOADED_FONTS[state.fontFamily])return'"'+state.fontFamily+'","Segoe UI",sans-serif';
  return'"'+state.fontFamily+'","Segoe UI","Microsoft YaHei",sans-serif';}
+
+/* ================= 画框模板库（frame）：数据驱动，预览=导出同源 ================= */
+const FRAME_CATS=[['bar','经典底栏'],['letter','电影黑边'],['brand','品牌风'],['film','胶片相纸'],['pro','专业流行']];
+// inset: 照片外留白占整画布比例 t/b/l/r；dark=深底（浅字）；mat=照片衬底色
+const FRAMES=[
+ // ---- 经典底栏 ----
+ {id:'classic',cat:'bar',zh:'经典底栏',en:'Classic bar',bg:'#ffffff',inset:{t:.035,b:.15,l:.035,r:.035},bar:{place:'center'},tc:'#1a1a1a',sc:'#8a8a8a',photo:{shadow:true}},
+ {id:'magazine',cat:'bar',zh:'杂志双栏',en:'Magazine',bg:'#ffffff',inset:{t:.02,b:.11,l:.02,r:.02},bar:{place:'split'},tc:'#1f2937',sc:'#9aa0a8',photo:{}},
+ {id:'minwhite',cat:'bar',zh:'纯白留白',en:'Minimal white',bg:'#ffffff',inset:{t:.06,b:.135,l:.06,r:.06},bar:{place:'center'},tc:'#9a9a9a',sc:'#c0c0c0',photo:{}},
+ {id:'minimal',cat:'bar',zh:'极简角标',en:'Minimal corner',bg:'#ffffff',inset:{t:.015,b:.055,l:.015,r:.015},bar:{place:'corner'},tc:'#555555',sc:'#8a8a8a',photo:{}},
+ // ---- 电影黑边 ----
+ {id:'cinematic',cat:'letter',zh:'电影黑边',en:'Cinematic',bg:'#000000',dark:true,inset:{t:.09,b:.13,l:0,r:0},bar:{place:'split'},tc:'#f5f5f5',sc:'#b9b9b9',photo:{}},
+ {id:'scope',cat:'letter',zh:'宽银幕 2.35:1',en:'CinemaScope',bg:'#000000',dark:true,contentRatio:2.35,inset:{t:.12,b:.14,l:0,r:0},bar:{place:'split'},tc:'#f5f5f5',sc:'#b9b9b9',photo:{}},
+ {id:'pureblack',cat:'letter',zh:'纯黑极简',en:'Black minimal',bg:'#0a0a0a',dark:true,inset:{t:.04,b:.135,l:.04,r:.04},bar:{place:'center'},tc:'#ececec',sc:'#9a9a9a',photo:{}},
+ // ---- 品牌风 ----
+ {id:'leica',cat:'brand',zh:'徕卡风',en:'Leica',bg:'#ffffff',inset:{t:.045,b:.13,l:.03,r:.03},bar:{place:'split'},accent:'#e20612',decor:['leicaLine'],tc:'#1a1a1a',sc:'#7d7d7d',photo:{}},
+ {id:'fuji',cat:'brand',zh:'富士经典',en:'Fujifilm',bg:'#f4f1e8',inset:{t:.03,b:.13,l:.03,r:.03},bar:{place:'split'},accent:'#0b7a3b',decor:['filmTag'],tc:'#1d1d1d',sc:'#7a7a72',photo:{}},
+ {id:'hasselblad',cat:'brand',zh:'哈苏',en:'Hasselblad',bg:'#0a0a0a',dark:true,inset:{t:.03,b:.135,l:.03,r:.03},bar:{place:'center'},accent:'#e08214',tc:'#f0ece4',sc:'#b9ac97',photo:{}},
+ // ---- 胶片相纸 ----
+ {id:'polaroid',cat:'film',zh:'拍立得',en:'Polaroid',bg:'#ffffff',inset:{t:.045,b:.20,l:.045,r:.045},bar:{place:'center'},tc:'#333333',sc:'#9a9a9a',photo:{shadow:true}},
+ {id:'vintage',cat:'film',zh:'复古胶片',en:'Vintage',bg:'#e9dcc0',inset:{t:.045,b:.14,l:.045,r:.045},bar:{place:'center'},tc:'#6b5a38',sc:'#97855f',photo:{shadow:true}},
+ {id:'pastel',cat:'film',zh:'马卡龙粉',en:'Pastel',bg:'#f6d9e3',inset:{t:.05,b:.14,l:.05,r:.05},bar:{place:'center'},tc:'#8a5a6b',sc:'#b08494',photo:{round:.04,shadow:true}},
+ {id:'album',cat:'film',zh:'旧相册',en:'Photo album',bg:'#ede2cc',inset:{t:.045,b:.14,l:.03,r:.03},bar:{place:'center'},mat:{color:'#fdfaf2',out:.012},decor:['cornerTri'],tc:'#5a4a32',sc:'#9c8b66',photo:{}},
+ {id:'filmstrip',cat:'film',zh:'胶片齿孔',en:'Film strip',bg:'#0a0a0a',dark:true,inset:{t:.07,b:.14,l:.035,r:.035},bar:{place:'center'},decor:['sprocketLR'],tc:'#eeeeee',sc:'#a8a8a8',photo:{}},
+ {id:'contact',cat:'film',zh:'接触印样',en:'Contact sheet',bg:'#0a0a0a',dark:true,inset:{t:.06,b:.135,l:.04,r:.04},bar:{place:'center'},mat:{color:'#ffffff',out:.006},decor:['sprocketT'],tc:'#f5f5f5',sc:'#bdbdbd',photo:{}},
+ {id:'darkroom',cat:'film',zh:'暗房样片',en:'Darkroom proof',bg:'#0d0d0d',dark:true,inset:{t:.05,b:.15,l:.05,r:.05},bar:{place:'center'},mat:{color:'#f5efe1',out:.04},decor:['proofStamp'],tc:'#e8e0cf',sc:'#a99e88',photo:{}},
+ // ---- 专业/流行 ----
+ {id:'cropmarks',cat:'pro',zh:'印刷标记',en:'Crop marks',bg:'#ffffff',inset:{t:.07,b:.12,l:.07,r:.07},bar:{place:'split'},cmyk:true,decor:['cropL'],tc:'#404040',sc:'#8a8a8a',photo:{}},
+ {id:'frosted',cat:'pro',zh:'磨砂玻璃',en:'Frosted',bg:'blur',dark:true,inset:{t:.04,b:.14,l:.04,r:.04},bar:{place:'center',chip:true},tc:'#ffffff',sc:'#e6e6e6',photo:{round:.05,shadow:true}},
+ {id:'datestamp',cat:'pro',zh:'日期纪念',en:'Date stamp',bg:'#ffffff',inset:{t:.045,b:.16,l:.045,r:.045},bar:{place:'center'},dateAccent:'#d9772b',tc:'#222222',sc:'#b5b5b5',photo:{shadow:true}}
+];
+/* 干净胶片框（暗房样片/接触印样/胶片齿孔/旧相册）：选中时默认不勾选品牌标/型号/拍摄参数/镜头/日期 */
+const FRAME_CLEAN=['darkroom','contact','filmstrip','album'];
+function getFrame(id){for(const f of FRAMES){if(f.id===id)return f;}return FRAMES[0];}
+function frameOutSize(sw,sh,t){const I=t.inset;return{W:Math.round(sw/(1-I.l-I.r)),H:Math.round(sh/(1-I.t-I.b))};}
+function frameGeometry(W,H,t){
+ const I=t.inset;const ax=I.l*W,ay=I.t*H,aw=W*(1-I.l-I.r),ah=H*(1-I.t-I.b);
+ let box;
+ if(t.contentRatio){box=fitBox([ax,ay,ax+aw,ay+ah],t.contentRatio,1);}else{box=[ax,ay,ax+aw,ay+ah];}
+ return{photo:box,area:[ax,ay,ax+aw,ay+ah]};
+}
+/* 白标实时染色：把 presets 白色 logo 染成指定文字色，深底染浅/浅底染深（不依赖原色文件） */
+const _tintCache={};
+function tintLogo(brand,color){
+ if(!brand)return null;
+ const base=makeLogoCanvas(brand);if(!base)return null;
+ const key=brand+'@'+color;if(_tintCache[key])return _tintCache[key];
+ const cv=document.createElement('canvas');cv.width=base.width;cv.height=base.height;const x=cv.getContext('2d');
+ x.drawImage(base,0,0);x.globalCompositeOperation='source-in';x.fillStyle=color;x.fillRect(0,0,cv.width,cv.height);
+ _tintCache[key]=cv;return cv;
+}
+function frameDrawPhoto(c,src,g,t,crop){
+ let[px,py,qx,qy]=g.photo;let pw=qx-px,ph=qy-py;
+ if(t.mat){const o=Math.min(pw,ph)*(t.mat.out||.01);c.fillStyle=t.mat.color;c.fillRect(px-o,py-o,pw+2*o,ph+2*o);}
+ const rad=t.photo.round?Math.min(pw,ph)*t.photo.round:0;
+ if(t.photo.shadow){c.save();c.shadowColor='rgba(0,0,0,.28)';c.shadowBlur=Math.min(pw,ph)*0.03;c.shadowOffsetY=Math.min(pw,ph)*0.012;c.fillStyle='#000';rr(c,px,py,pw,ph,rad);c.fill();c.restore();}
+ c.save();if(rad>0){rr(c,px,py,pw,ph,rad);c.clip();}
+ c.drawImage(src,crop?crop.cx:0,crop?crop.cy:0,src.width-(crop?crop.cx*2:0),src.height-(crop?crop.cy*2:0),px,py,pw,ph);
+ c.restore();
+}
+function frameText(c,txt,x,y,fs,w,color,align){c.font=w+' '+fs+'px '+fontStack();c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;c.fillText(txt,x,y);}
+function frameLogoDraw(c,brand,color,h,cy,align,xAnchor){
+ const lg=tintLogo(brand,color);if(!lg)return 0;
+ const s=h/lg.height,nw=lg.width*s;
+ const dx=align==='end'?xAnchor-nw:(align==='center'?xAnchor-nw/2:xAnchor);
+ c.drawImage(lg,dx,cy-h/2,nw,h);return nw+h*0.45;
+}
+function drawFrameInfo(c,W,H,g,t,v){
+ const place=t.bar.place;if(!place||place==='none')return;
+ const I=t.inset;
+ const top=H*(1-I.b),bcy=(top+H)/2;
+ const fs1=W*0.026,fs2=W*0.0175;
+ const cam=state.frameModel!==false?(v.camera||''):'';
+ const params=state.frameParams?[v.focal,v.aperture,v.shutter,v.iso].filter(Boolean).join('   '):'';
+ const lens=state.frameLens?(v.lens||''):'';
+ const date=state.frameDate?[v.date,v.time].filter(Boolean).join(' '):'';
+ const brand=state.frameLogo?brandToLogo(v.make,v.model):null;
+ const padX=W*0.035;
+ if(t.bar.chip){
+   const ch=H*I.b*0.62,cw=W*(1-I.l-I.r)*0.92,cx=W/2,cy=top+H*I.b/2;
+   c.fillStyle='rgba(0,0,0,.30)';rr(c,cx-cw/2,cy-ch/2,cw,ch,ch/2);c.fill();
+ }
+ if(place==='corner'){
+   const txt=[cam,params].filter(Boolean).join('  ·  ');if(!txt)return;
+   frameText(c,txt,W-padX,bcy,fs2,'500',t.sc,'end');return;
+ }
+ if(place==='split'){
+   // 印刷标记：左侧 = CMYK 色块 + 型号（单行），不画镜头避免重叠
+   if(t.cmyk){
+     const ss=fs1*0.95,gap=ss*0.14,colors=['#00b0f0','#e83e8c','#ffe600','#0a0a0a'];let xx=padX;
+     colors.forEach(cc=>{c.fillStyle=cc;c.fillRect(xx,bcy-ss/2,ss,ss);xx+=ss+gap;});
+     if(cam)frameText(c,cam,xx+fs2*0.5,bcy,fs1,'700',t.tc,'start');
+   }else{
+     let lx=padX;
+     if(cam){const lw=brand?frameLogoDraw(c,brand,t.tc,fs1*1.25,bcy-fs2*0.55,'start',lx):0;lx+=lw;frameText(c,cam,lx,bcy-fs2*0.55,fs1,'700',t.tc,'start');}
+     if(lens)frameText(c,lens,padX,bcy+fs1*1.05,fs2,'500',t.sc,'start');
+   }
+   if(params)frameText(c,params,W-padX,bcy-fs2*0.55,fs1,'700',t.tc,'end');
+   if(date)frameText(c,date,W-padX,bcy+fs1*1.05,fs2,'500',t.sc,'end');
+   return;
+ }
+ // center：主行(logo+型号) / 参数 / 日期，按实际行数垂直居中
+ const rows=[];
+ if(cam)rows.push({t:cam,fs:fs1,w:'700',color:t.tc,logo:brand});
+ if(params)rows.push({t:params,fs:fs2,w:'500',color:t.sc});
+ if(date)rows.push({t:date,fs:fs2,w:'600',color:t.dateAccent||t.sc});
+ if(!rows.length)return;
+ const gap=fs2*0.4;const hs=rows.map(r=>r.fs*1.22);const tot=hs.reduce((a,b)=>a+b,0)+gap*(rows.length-1);
+ let yy=bcy-tot/2;
+ rows.forEach((r,i)=>{const h=hs[i],cy=yy+h/2;
+   if(r.logo){c.font=r.w+' '+r.fs+'px '+fontStack();const tw=c.measureText(r.t).width,lgH=r.fs*1.25;const lg=tintLogo(r.logo,r.color);const lgW=lg?lg.width*(lgH/lg.height)+lgH*0.45:0;const sx=(W-tw-lgW)/2,xx=sx;
+     if(lg){const sc2=lgH/lg.height;c.drawImage(lg,sx,cy-lgH/2,lg.width*sc2,lgH);frameText(c,r.t,sx+lgW,cy,r.fs,r.w,r.color,'start');}
+     else frameText(c,r.t,W/2,cy,r.fs,r.w,r.color,'center');
+   }else frameText(c,r.t,W/2,cy,r.fs,r.w,r.color,'center');
+   yy+=h+gap;});
+}
+function drawFrameDecor(c,which,W,H,g,t){
+ const[p0x,p0y,p1x,p1y]=g.photo,pw=p1x-p0x,ph=p1y-p0y,s=W/900;
+ if(which==='sprocketTB'||which==='sprocketT'){ // 上下横齿孔 / 仅顶部
+   const holeRow=(y0,bh)=>{const h=bh*0.5,w=h*1.5,gap=w*0.45,step=w+gap,n=Math.floor(W/step),off=(W-n*step+gap)/2;c.fillStyle='#f5f5f5';for(let i=0;i<n;i++){rr(c,off+i*step,y0+(bh-h)/2,w,h,h*0.28);c.fill();}};
+   holeRow(0,H*t.inset.t);if(which==='sprocketTB')holeRow(H*(1-t.inset.b),H*t.inset.b);
+ }
+ else if(which==='sprocketLR'){ // 左右竖齿孔
+   const holeCol=(x0,bw)=>{const w=bw*0.46,h=w*1.5,gap=h*0.5,step=h+gap,span=p1y-p0y,n=Math.floor(span/step),off=p0y+(span-n*step+gap)/2;c.fillStyle='#f5f5f5';for(let i=0;i<n;i++){rr(c,x0+(bw-w)/2,off+i*step,w,h,w*0.28);c.fill();}};
+   holeCol(0,W*t.inset.l);holeCol(W*(1-t.inset.r),W*t.inset.r);
+ }
+ else if(which==='cornerTri'){
+   const ss=Math.min(pw,ph)*0.075;c.fillStyle='#241c14';
+   [[p0x,p0y,1,1],[p1x,p0y,-1,1],[p0x,p1y,1,-1],[p1x,p1y,-1,-1]].forEach(([x,y,dx,dy])=>{c.beginPath();c.moveTo(x,y);c.lineTo(x+ss*dx,y);c.lineTo(x,y+ss*dy);c.closePath();c.fill();});
+ }
+ else if(which==='cropL'){
+   const len=W*0.026,gap=W*0.009;c.strokeStyle='#0a0a0a';c.lineWidth=Math.max(1,s);
+   const L=(x,y,hx,hy)=>{c.beginPath();c.moveTo(x+hx*(len+gap),y);c.lineTo(x,y);c.lineTo(x,y+hy*(len+gap));c.stroke();};
+   L(p0x,p0y,-1,-1);L(p1x,p0y,1,-1);L(p0x,p1y,-1,1);L(p1x,p1y,1,1);
+ }
+ else if(which==='proofStamp'){ // PROOF 红章叠在照片内左下角，不占底部信息栏
+   const fs=Math.max(18*s,W*0.028),x=p0x+W*0.02,y=p1y-W*0.012;c.save();c.translate(x,y);c.rotate(-8*Math.PI/180);
+   c.strokeStyle='#b22222';c.lineWidth=2*s;c.strokeRect(-4*s,-fs*0.95,fs*4.4,fs*1.25);frameText(c,'PROOF',0,0,fs,'900','#b22222','start');c.restore();
+ }
+ else if(which==='leicaLine'){
+   c.fillStyle=t.accent;c.fillRect(0,H*(1-t.inset.b)-3*s,W,3*s);
+   const by=H*(1-t.inset.b),bh=H*t.inset.b,cx=W/2;c.fillRect(cx-1.5*s,by+bh*0.2,3*s,bh*0.6);
+ }
+ else if(which==='filmTag'){
+   const fs=W*0.016,txt='CLASSIC';c.font='700 '+fs+'px '+fontStack();const tw=c.measureText(txt).width+fs*0.8,th=fs*1.5;
+   c.fillStyle=t.accent;rr(c,p1x-tw,p0y+fs*0.2,tw,th,th*0.2);c.fill();frameText(c,txt,p1x-tw/2,p0y+fs*0.2+th/2,fs,'700','#ffffff','center');
+ }
+}
+function drawFrame(c,W,H,ph,src,crop){
+ const t=getFrame(state.frameTpl);
+ if(t.bg==='blur'){c.save();c.filter='blur('+vh(H,3.6)+'px) saturate(0.9)';drawCoverInto(c,src,0,0,W,H,crop);c.filter='none';c.restore();c.fillStyle='rgba(0,0,0,.22)';c.fillRect(0,0,W,H);}
+ else{c.fillStyle=t.bg;c.fillRect(0,0,W,H);}
+ const g=frameGeometry(W,H,t);
+ (t.decor||[]).forEach(d=>{if(d==='sprocketTB'||d==='sprocketLR'||d==='sprocketT')drawFrameDecor(c,d,W,H,g,t);});
+ frameDrawPhoto(c,src,g,t,crop);
+ const v=buildValues(ph);
+ drawFrameInfo(c,W,H,g,t,v);
+ (t.decor||[]).forEach(d=>{if(d!=='sprocketTB'&&d!=='sprocketLR'&&d!=='sprocketT')drawFrameDecor(c,d,W,H,g,t);});
+}
 
 /* ---------- 模糊卡片（1:1 移植 blur-card 五布局 / badge / logo） ---------- */
 function blurGeometry(W,H){
@@ -914,6 +1087,10 @@ function fillSelect(id,items,key,onchange){
  items.forEach(it=>{const o=el('option');o.value=it.v;o.textContent=it.t;s.append(o);});
  s.value=state[key];s.onchange=()=>{state[key]=isNaN(+s.value)||String(s.value).trim()===''?s.value:+s.value;onchange&&onchange();scheduleRender();};
 }
+function buildFrameSelect(){const s=document.getElementById('frameTpl');if(!s)return;s.innerHTML='';const CN={bar:'经典底栏',letter:'电影黑边',brand:'品牌风',film:'胶片相纸',pro:'专业流行'},EN={bar:'Classic',letter:'Cinematic',brand:'Brand',film:'Film',pro:'Pro'};FRAME_CATS.forEach(([cid])=>{const og=document.createElement('optgroup');og.label=LANG==='en'?EN[cid]:CN[cid];FRAMES.filter(f=>f.cat===cid).forEach(f=>{const o=document.createElement('option');o.value=f.id;o.textContent=LANG==='en'?f.en:f.zh;og.append(o);});s.append(og);});s.value=state.frameTpl;
+function syncFrameChk(){['frameLogo','frameModel','frameParams','frameLens','frameDate'].forEach(k=>{const e=document.getElementById(k);if(!e)return;e.checked=state[k];});}
+s.onchange=()=>{state.frameTpl=s.value;if(FRAME_CLEAN.includes(s.value)){state.frameLogo=false;state.frameModel=false;state.frameParams=false;state.frameLens=false;state.frameDate=false;}syncFrameChk();scheduleRender();};
+['frameLogo','frameModel','frameParams','frameLens','frameDate'].forEach(k=>{const e=document.getElementById(k);if(!e)return;e.checked=state[k];e.onchange=()=>{state[k]=e.checked;scheduleRender();};});}
 function buildControls(){
  // 滑块（range + 可手输 number）
  sliderTo('c_fontSizePct','fontSizePct','字号 %宽','Font %W',0.8,6,0.1);
@@ -943,6 +1120,7 @@ function buildControls(){
  fillSelect('badgeAlign',[['左对齐','Left'],['居中','Center'],['右对齐','Right']].map(v=>({v:v[0],t:L(v[0],v[1])})),'badgeAlign');
  fillSelect('imgCount',[1,2,3,4,5].map(v=>({v,t:String(v)})),'imgCount',buildSlots);
  fillSelect('imgAlign',IMG_ALIGNS.map(v=>({v,t:v})),'imgAlign');
+  buildFrameSelect();
  fillSelect('exRatio',RATIOS.filter(r=>r[0]!=='auto').map(r=>({v:r[0],t:r[0]==='raw'?L('原比例','Original'):r[0]})),'exportRatio');
  buildFieldGrid();buildAnchor();buildTokens();buildFonts();buildSlots();refreshGroups();
 }
@@ -1027,13 +1205,14 @@ function bindStatic(){const _cu=document.getElementById('btnCheckUpdate');if(_cu
   r.onload=()=>{try{const ff=new FontFace(name,r.result);ff.load().then(loaded=>{document.fonts.add(loaded);LOADED_FONTS[name]=1;state.fontFamily=name;buildFonts();setStatus(L('已加载字体：','Font loaded: ')+name);scheduleRender();}).catch(e=>setStatus(L('字体加载失败（.ttc 可能不被浏览器支持）','Font load failed')));}catch(e){setStatus(L('字体加载失败','Font load failed'));}};r.readAsArrayBuffer(f);};
 }
 function refreshGroups(){
- const blur=state.style==='blur';
+ const blur=state.style==='blur',frame=state.style==='frame',hideSide=blur||frame;
  document.getElementById('grpBlur').classList.toggle('hidden',!blur);
- document.getElementById('grpPos').classList.toggle('hidden',blur);
- document.getElementById('grpDeco').classList.toggle('hidden',blur);
+  const _gf=document.getElementById('grpFrame');if(_gf)_gf.classList.toggle('hidden',!frame);
+ document.getElementById('grpPos').classList.toggle('hidden',hideSide);
+ document.getElementById('grpDeco').classList.toggle('hidden',hideSide);
  document.getElementById('imgBody').classList.toggle('hidden',!state.imgEnabled);
- document.querySelectorAll('.nb-tab[data-hideon="blur"]').forEach(tb=>tb.classList.toggle('hidden',blur));
- if(blur){const act=document.querySelector('.nb-tab.active');if(act&&act.dataset.hideon==='blur')switchPage('pstyle');}
+ document.querySelectorAll('.nb-tab[data-hideon="blur"]').forEach(tb=>tb.classList.toggle('hidden',hideSide));
+ if(hideSide){const act=document.querySelector('.nb-tab.active');if(act&&act.dataset.hideon==='blur')switchPage('pstyle');}
  // 同步勾选态
  ['bold','bgEnabled','outlineEnabled','shadowEnabled','fgShadow','fgOutline','badgeEnabled','overlayImage','imgEnabled'].forEach(k=>{const e=document.getElementById(k);if(e)e.checked=state[k];});
  ['textColor','bgColor','outlineColor'].forEach(k=>{const e=document.getElementById(k);if(e)e.value=state[k];});
